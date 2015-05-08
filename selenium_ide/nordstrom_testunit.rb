@@ -5,7 +5,7 @@ require "test/unit"
 class NordstromTestunit < Test::Unit::TestCase
 
   def setup
-    @driver = Selenium::WebDriver.for :firefox
+    @driver = Selenium::WebDriver.for :chrome
     @base_url = "http://5.syndeca.com/"
     @accept_next_alert = true
     @driver.manage.timeouts.implicit_wait = 30
@@ -20,8 +20,11 @@ class NordstromTestunit < Test::Unit::TestCase
   def test_nordstrom_testunit
     @driver.get "http://5.syndeca.com/nordstrom/index.html?archive=true#catalog/jan-2015-move/page/1"
     assert !60.times{ break if (element_present?(:css, "img.syndeca-carousel-spread-hit") rescue false); sleep 1 }
-    @driver.find_element(:css, "area[alt=\"Nike 'HSC' Dri-FIT Hooded Top\"]").click
+
+    #@driver.find_element(:css, "area[alt=\"Nike 'HSC' Dri-FIT Hooded Top\"]").click
+    @driver.execute_script('document.querySelector("area[alt=\"Nike \'HSC\' Dri-FIT Hooded Top\"]").click()')
     assert !60.times{ break if (element_present?(:css, "div.syn-product-info > h3") rescue false); sleep 1 }
+
     @driver.find_element(:xpath, "//a[contains(@href, '#close')]").click
     assert !60.times{ break unless (element_present?(:xpath, "//a[contains(@href, '#close')]") rescue true); sleep 1 }
   end

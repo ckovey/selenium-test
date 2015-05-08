@@ -29,9 +29,13 @@ class SampleTest < Test::Unit::TestCase
   def test_product_modal
     @driver.get "http://5.syndeca.com/nordstrom/index.html?archive=true#catalog/jan-2015-move/page/1"
     assert !60.times{ break if (element_present?(:css, "img.syndeca-carousel-spread-hit") rescue false); sleep 1 }
-    @driver.find_element(:css, "area[alt=\"Nike 'HSC' Dri-FIT Hooded Top\"]").click
+
+    #@driver.find_element(:css, "area[alt=\"Nike 'HSC' Dri-FIT Hooded Top\"]").click
+    @driver.execute_script('document.querySelector("area[alt=\"Nike \'HSC\' Dri-FIT Hooded Top\"]").click()')
     assert !60.times{ break if (element_present?(:css, "div.syn-product-info > h3") rescue false); sleep 1 }
-    @driver.find_element(:xpath, "//a[contains(@href, '#close')]").click
+
+    #@driver.find_element(:xpath, "//a[contains(@href, '#close')]").click
+    @driver.execute_script('document.querySelector(".syn-product-modal-close").click()')
     assert !60.times{ break unless (element_present?(:xpath, "//a[contains(@href, '#close')]") rescue true); sleep 1 }
   end
 
