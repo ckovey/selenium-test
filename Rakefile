@@ -22,8 +22,9 @@ task :test do
       ENV['BS_AUTOMATE_OS_VERSION'] = browser['os_version']
       Dir.glob(@test_folder).each do |test_file|
         puts "Running: #{test_file}"
-
-        IO.popen("ruby #{test_file}") do |io|
+        client = test_file.match(/tests\/(\w+)\.rb/).captures
+        output_file = 'results/' + client[0] + '_' + browser['browser'] + browser['browser_version'] + ".xml"
+        IO.popen("rspec #{test_file} --format RspecJunitFormatter --out #{output_file}") do |io|
           io.each do |line|
             puts line
           end
@@ -37,3 +38,6 @@ task :test do
 end
 
 task :default => [:test]
+
+
+

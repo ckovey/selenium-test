@@ -3,37 +3,24 @@ require "selenium-webdriver"
 require "rspec"
 include RSpec::Expectations
 
+# if something takes longer than 10 seconds, we should fail
+IMPLICIT_WAIT = 10
+
 describe "Nordstrom" do
 
-  USERNAME = ENV['BS_USERNAME']
-  BROWSERSTACK_ACCESS_KEY = ENV['BS_AUTHKEY']
-  # if something takes longer than 10 seconds, we should fail
-  IMPLICIT_WAIT = 10
-
   before(:each) do
-    if USERNAME.nil? || USERNAME == '' || BROWSERSTACK_ACCESS_KEY.nil? || BROWSERSTACK_ACCESS_KEY == ''
-      puts "Please set ENV while running rake task: rake BS_USERNAME=XXX BS_AUTHKEY=YYY ..."
-      exit
-    end
-    url = "http://#{USERNAME}:#{BROWSERSTACK_ACCESS_KEY}@hub.browserstack.com/wd/hub"
-    capabilities = Selenium::WebDriver::Remote::Capabilities.new
-    capabilities['os'] = ENV['BS_AUTOMATE_OS']
-    capabilities['os_version'] = ENV['BS_AUTOMATE_OS_VERSION']
-    capabilities['browser'] = ENV['SELENIUM_BROWSER']
-    capabilities['browser_version'] = ENV['SELENIUM_VERSION']
-    capabilities['browserstack.debug'] = true
-    capabilities['resolution'] = '1280x1024'
-    @driver = Selenium::WebDriver.for(:remote,
-                                      :url => url,
-                                      :desired_capabilities => capabilities)
+    @driver = Selenium::WebDriver.for :firefox
+    @base_url = "http://5.syndeca.com/"
+    @accept_next_alert = true
     @driver.manage.timeouts.implicit_wait = IMPLICIT_WAIT
+
     @driver.get "http://5.syndeca.com/nordstrom/index.html?archive=true#catalog/jan-2015-move/page/1"
   end
-
+  
   after(:each) do
     @driver.quit
   end
-
+  
   it "should load the first page" do
     expect(element_present?(:css, "img.syndeca-carousel-spread-hit")).to be true
   end
